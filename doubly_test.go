@@ -8,7 +8,7 @@ import (
 
 func TestEmpty(t *testing.T) {
 
-	list := New()
+	list := NewDoublyLinkedList()
 
 	if list.IsEmpty() {
 		t.Log("Empty Passed")
@@ -157,7 +157,7 @@ func TestEmpty(t *testing.T) {
 
 func TestDoublyList(t *testing.T) {
 	done := make(chan bool)
-	list := New()
+	list := NewDoublyLinkedList()
 	var produced, consumed int
 
 	go func() {

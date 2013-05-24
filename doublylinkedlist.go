@@ -15,7 +15,7 @@ type DoublyLinkedList struct {
 /**
 * Returns reference to new DoublyLinkedList
  */
-func New() *DoublyLinkedList {
+func NewDoublyLinkedList() *DoublyLinkedList {
 	return new(DoublyLinkedList).Clear()
 }
 
@@ -44,8 +44,7 @@ func (ll *DoublyLinkedList) Clear() *DoublyLinkedList {
 }
 
 /**
-* Add element to front of list
-* @param i -- value to add to list
+* Add interface value to front of list
  */
 func (ll *DoublyLinkedList) PushFront(i interface{}) {
 	frontSem <- 1
@@ -55,7 +54,6 @@ func (ll *DoublyLinkedList) PushFront(i interface{}) {
 
 /**
 * Add element to back of list
-* @param i -- value to add to list
  */
 func (ll *DoublyLinkedList) PushBack(i interface{}) {
 	backSem <- 1

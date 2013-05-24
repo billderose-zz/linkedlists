@@ -6,6 +6,9 @@ import (
 	"time"
 )
 
+const capacity = 10000
+
+
 func TestList(t *testing.T) {
 	done := make(chan bool)
 	list := new(SinglyLinkedList)
@@ -13,7 +16,7 @@ func TestList(t *testing.T) {
 
 	go func() {
 		for i := 0; i < capacity*10; i++ {
-			list.Push(rand.Int())
+			list.PushFront(rand.Int())
 			produced++
 			time.Sleep(time.Microsecond)
 		}
@@ -45,7 +48,7 @@ func TestList(t *testing.T) {
 func BenchmarkList(b *testing.B) {
 	l := new(SinglyLinkedList)
 	for j := 0; j < b.N; j++ {
-		l.Push(j)
+		l.PushFront(j)
 		l.Pop()
 	}
 }
