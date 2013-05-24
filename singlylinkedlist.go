@@ -4,7 +4,6 @@ import (
 	"errors"
 )
 
-
 var sem = make(chan int, 1)
 
 type SinglyLinkedList struct {
@@ -12,48 +11,36 @@ type SinglyLinkedList struct {
 	length int
 }
 
-/**
-* Returns reference to new SinglyLinkedList
- */
+// Returns reference to new SinglyLinkedList
 func NewSinglyLinkedList() *SinglyLinkedList {
 	return new(SinglyLinkedList).Clear()
 }
 
-/**
-* Determine if list is empty
- */
+// Determine if list is empty
 func (ll *SinglyLinkedList) IsEmpty() bool {
 	return ll.length == 0
 }
 
-/**
-* Return the size of the list
- */
+// Return the size of the list
 func (ll *SinglyLinkedList) Size() int {
 	return ll.length
 }
 
-/**
-* Resets the list
- */
+// Resets the list
 func (ll *SinglyLinkedList) Clear() *SinglyLinkedList {
 	ll.head = nil
 	ll.length = 0
 	return ll
 }
 
-/**
-* Add interface value to front of list
- */
+// Add interface value to front of list
 func (ll *SinglyLinkedList) PushFront(i interface{}) {
 	sem <- 1
 	ll.put(i)
 	<-sem
 }
 
-/**
-* Remove interface value to front of list
- */
+// Remove interface value to front of list
 func (ll *SinglyLinkedList) Pop() (interface{}, error) {
 	sem <- 1
 	val, err := ll.take()
@@ -61,9 +48,7 @@ func (ll *SinglyLinkedList) Pop() (interface{}, error) {
 	return val, err
 }
 
-/**
-* Add interface value to back of list
- */
+// Add interface value to back of list
 func (ll *SinglyLinkedList) PushBack(i interface{}) {
 	var tail *SingleLink
 	for e := ll.head; e != nil; e = e.next {
@@ -73,27 +58,21 @@ func (ll *SinglyLinkedList) PushBack(i interface{}) {
 	tail.next = link
 }
 
-/**
-* Return reference to front of list
- */
+// Return reference to front of list
 func (ll *SinglyLinkedList) Front() *SingleLink {
 	return ll.head
 }
 
-/**
-* Private helper method to facilitate pushing
-* to the head of the list
- */
+// Private helper method to facilitate pushing
+// to the head of the list
 func (ll *SinglyLinkedList) put(i interface{}) {
 	ll.head = &SingleLink{i, ll.head}
 	ll.length++
 }
 
-/**
-* Private helper method to facilitate poping
-* from the head of the list. Returns the value of
-* the front element
- */
+// Private helper method to facilitate poping
+// from the head of the list. Returns the value of
+// the front elemen
 func (ll *SinglyLinkedList) take() (interface{}, error) {
 	if !ll.IsEmpty() {
 		e := ll.head

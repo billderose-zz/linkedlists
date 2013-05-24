@@ -12,30 +12,22 @@ type DoublyLinkedList struct {
 	length     int
 }
 
-/**
-* Returns reference to new DoublyLinkedList
- */
+// Returns a reference to new DoublyLinkedList
 func NewDoublyLinkedList() *DoublyLinkedList {
 	return new(DoublyLinkedList).Clear()
 }
 
-/**
-* Determine if list is empty
- */
+// Determine if list is empty
 func (ll *DoublyLinkedList) IsEmpty() bool {
 	return ll.length == 0
 }
 
-/**
-* Return the size of the list
- */
+// Return the size of the list
 func (ll *DoublyLinkedList) Size() int {
 	return ll.length
 }
 
-/**
-* Resets the list
- */
+// Resets the list
 func (ll *DoublyLinkedList) Clear() *DoublyLinkedList {
 	ll.head = nil
 	ll.tail = nil
@@ -43,27 +35,22 @@ func (ll *DoublyLinkedList) Clear() *DoublyLinkedList {
 	return ll
 }
 
-/**
-* Add interface value to front of list
- */
+// Add interface value to front of list
 func (ll *DoublyLinkedList) PushFront(i interface{}) {
 	frontSem <- 1
 	ll.putFront(i)
 	<-frontSem
 }
 
-/**
-* Add element to back of list
- */
+// Add interface value to back of list
 func (ll *DoublyLinkedList) PushBack(i interface{}) {
 	backSem <- 1
 	ll.putBack(i)
 	<-backSem
 }
 
-/**
-* Remove element from front of list
- */
+// Remove interface value from front of list. Error is non nil
+// if list is empty
 func (ll *DoublyLinkedList) PopFront() (interface{}, error) {
 	frontSem <- 1
 	val, err := ll.takeFront()
@@ -71,9 +58,8 @@ func (ll *DoublyLinkedList) PopFront() (interface{}, error) {
 	return val, err
 }
 
-/**
-* Remove element from back of list
- */
+// Remove interface value from back of list. Error is non nil
+// if list is empty
 func (ll *DoublyLinkedList) PopBack() (interface{}, error) {
 	backSem <- 1
 	val, err := ll.takeBack()
@@ -81,9 +67,8 @@ func (ll *DoublyLinkedList) PopBack() (interface{}, error) {
 	return val, err
 }
 
-/**
-* Get, but do not remove, the first element of the list
- */
+// Get, but do not remove, the first element of the list. Error is non nil
+// if list is empty
 func (ll *DoublyLinkedList) PeekFront() (interface{}, error) {
 	frontSem <- 1
 	val, err := ll.takeFront()
@@ -92,9 +77,8 @@ func (ll *DoublyLinkedList) PeekFront() (interface{}, error) {
 	return val, err
 }
 
-/**
-* Get, but do not remove, the last element of the list
- */
+// Get, but do not remove, the last element of the list. Error is non nil
+// if list is empty
 func (ll *DoublyLinkedList) PeekBack() (interface{}, error) {
 	frontSem <- 1
 	val, err := ll.takeBack()
@@ -103,9 +87,8 @@ func (ll *DoublyLinkedList) PeekBack() (interface{}, error) {
 	return val, err
 }
 
-/**
-* Removes the desired interface value
- */
+// Removes the desired interface value from the list. Return value
+// is nil if interface value is not found
 func (ll *DoublyLinkedList) Remove(i interface{}) interface{} {
 	if elm, exists := ll.Contains(i); exists {
 		next := elm.Next()
@@ -119,31 +102,25 @@ func (ll *DoublyLinkedList) Remove(i interface{}) interface{} {
 	return nil
 }
 
-/**
-* Return reference to front of  list
- */
+// Return reference to front of  list
 func (ll *DoublyLinkedList) Front() *DoubleLink {
-	if ll != nil {
+	if !ll.IsEmpty() {
 		return ll.head
 	}
 	return nil
 }
 
-/**
-* Return reference to back of list
- */
+// Return reference to back of list
 func (ll *DoublyLinkedList) Back() *DoubleLink {
-	if ll != nil {
+	if !ll.IsEmpty() {
 		return ll.tail
 	}
 	return nil
 }
 
-/**
-* Determine if element is contained in list
- */
+// Determine if element is contained in list
 func (ll *DoublyLinkedList) Contains(i interface{}) (*DoubleLink, bool) {
-	if i != nil {
+	if i != nil && !ll.IsEmpty() {
 		for e := ll.Front(); e != nil; e = e.Next() {
 			if reflect.DeepEqual(i, e.val) {
 				return e, true
@@ -153,10 +130,8 @@ func (ll *DoublyLinkedList) Contains(i interface{}) (*DoubleLink, bool) {
 	return nil, false
 }
 
-/**
-* Private helper method to facilitate pushing
-* to the head of the list
- */
+// Private helper method to facilitate pushing
+// to the head of the list
 func (ll *DoublyLinkedList) putFront(i interface{}) {
 	if !ll.IsEmpty() {
 		head := ll.head
@@ -170,11 +145,9 @@ func (ll *DoublyLinkedList) putFront(i interface{}) {
 	ll.length++
 }
 
-/**
-* Private helper method to facilitate poping
-* from the head of the list. Returns the value of
-* the front element
- */
+// Private helper method to facilitate poping
+// from the head of the list. Returns the value of
+// the front element. Error non-nil if list is empty
 func (ll *DoublyLinkedList) takeFront() (interface{}, error) {
 	if !ll.IsEmpty() {
 		head := ll.head
@@ -189,10 +162,8 @@ func (ll *DoublyLinkedList) takeFront() (interface{}, error) {
 	return nil, errors.New("List Empty")
 }
 
-/**
-* Private helper method to facilitate pushing
-* to the tail of the list.
- */
+// Private helper method to facilitate pushing
+// to the tail of the list.
 func (ll *DoublyLinkedList) putBack(i interface{}) {
 	if !ll.IsEmpty() {
 		tail := ll.tail
@@ -204,11 +175,9 @@ func (ll *DoublyLinkedList) putBack(i interface{}) {
 	}
 }
 
-/**
-* Private helper method to facilitate poping
-* from the tail of the list. Returns the value of the
-* back of the list
- */
+// Private helper method to facilitate poping
+// from the tail of the list. Returns the value of the
+// back of the list. Error non-nil if list is empty
 func (ll *DoublyLinkedList) takeBack() (interface{}, error) {
 	if !ll.IsEmpty() {
 		tail := ll.tail
