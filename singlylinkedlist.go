@@ -36,26 +36,31 @@ func (ll *SinglyLinkedList) Clear() *SinglyLinkedList {
 // Add interface value to front of list
 func (ll *SinglyLinkedList) PushFront(i interface{}) {
 	sem <- 1
-	ll.put(i)
+	ll.putFront(i)
 	<-sem
-}
-
-// Remove interface value to front of list
-func (ll *SinglyLinkedList) Pop() (interface{}, error) {
-	sem <- 1
-	val, err := ll.take()
-	<-sem
-	return val, err
 }
 
 // Add interface value to back of list
 func (ll *SinglyLinkedList) PushBack(i interface{}) {
-	var tail *SingleLink
-	for e := ll.head; e != nil; e = e.next {
-		tail = e
-	}
-	link := &SingleLink{i, nil}
-	tail.next = link
+	sem <- 1
+	ll.putBack(i)
+	<-sem
+}
+
+// Remove interface value to front of list
+func (ll *SinglyLinkedList) PopFront() (interface{}, error) {
+	sem <- 1
+	val, err := ll.takeFront()
+	<-sem
+	return val, err
+}
+
+// Remove interface value to back of list
+func (ll *SinglyLinkedList) PopBack() (interface{}, error) {
+	sem <- 1
+	val, err := ll.takeBack()
+	<-sem
+	return val, err
 }
 
 // Return reference to front of list
@@ -65,15 +70,30 @@ func (ll *SinglyLinkedList) Front() *SingleLink {
 
 // Private helper method to facilitate pushing
 // to the head of the list
-func (ll *SinglyLinkedList) put(i interface{}) {
+func (ll *SinglyLinkedList) putFront(i interface{}) {
 	ll.head = &SingleLink{i, ll.head}
 	ll.length++
 }
 
+// Private helper method to facilitate pushing
+// to the tail of the list
+func (ll *SinglyLinkedList) putBack(i interface{}) {
+	if ll.IsEmpty() {
+		ll.putFront(i)
+	} else {
+		var tail *SingleLink
+		for e := ll.head; e != nil; e = e.next {
+			tail = e
+		}
+		link := &SingleLink{i, nil}
+		tail.next = link
+	}
+}
+
 // Private helper method to facilitate poping
 // from the head of the list. Returns the value of
-// the front elemen
-func (ll *SinglyLinkedList) take() (interface{}, error) {
+// the front element
+func (ll *SinglyLinkedList) takeFront() (interface{}, error) {
 	if !ll.IsEmpty() {
 		e := ll.head
 		ll.head = ll.head.next
@@ -82,4 +102,25 @@ func (ll *SinglyLinkedList) take() (interface{}, error) {
 
 	}
 	return nil, errors.New("List Empty")
+}
+
+// Private helper method to facilitate poping
+// from the tail of the list. Returns the value of
+// the last element
+func (ll *SinglyLinkedList) takeBack() (interface{}, error) {
+	if ll.IsEmpty() {
+		return nil, errors.New("List Empty")
+	}
+
+	if ll.Size() == 1 {
+		return ll.takeFront()
+	}
+
+	var finger, previous *SingleLink
+	for finger = ll.Front(); finger.Next() != nil; finger = finger.Next() {
+		previous = finger
+	}
+	previous.SetNext(nil)
+	ll.length--
+	return previous.Value(), nil
 }
